@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", // Define a CORS policy named "AllowFrontend"
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173") // Allow requests from Vite's frontend
+            policy.WithOrigins("http://localhost:3000") // Allow requests from Vite's frontend
                   .AllowAnyMethod() // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
                   .AllowAnyHeader() // Allow all headers (Authorization, Content-Type, etc.)
                   .AllowCredentials(); // Allow sending cookies or authorization headers (for JWT, sessions, etc.)
@@ -57,6 +57,8 @@ builder.Services.AddSwaggerGen();
 //Database Connecton
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+ 
 
 var app = builder.Build();
 
@@ -94,7 +96,7 @@ app.MapPost("/api/auth/register", async (AppDbContext db, [FromBody] User newUse
 
 
 // ✅ Login & Generate JWT Token
-app.MapPost("/api/auth/login", async (AppDbContext db, [FromBody] UserCredentials credentials) =>
+app.MapPost("/api/auth/login", async (AppDbContext db,HttpContext httpContext, [FromBody] UserCredentials credentials) =>
 {
     var user = await db.Users.FirstOrDefaultAsync(u => u.Username == credentials.Username);
     if (user == null || !BCrypt.Net.BCrypt.Verify(credentials.Password, user.Password))
@@ -114,6 +116,15 @@ app.MapPost("/api/auth/login", async (AppDbContext db, [FromBody] UserCredential
     };
 
     var token = tokenHandler.CreateToken(tokenDescriptor);
+
+    var tokenString = tokenHandler.WriteToken(token);
+    httpContext.Response.Cookies.Append("AuthToken", tokenString, new CookieOptions
+    {
+        HttpOnly = true, // Prevent JavaScript access
+        Secure = true,   // Use HTTPS
+        SameSite = SameSiteMode.Strict,
+        Expires = DateTime.UtcNow.AddMinutes(60)
+    });
     return Results.Ok(new { Token = tokenHandler.WriteToken(token) });
 });
 

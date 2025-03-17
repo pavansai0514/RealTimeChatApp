@@ -1,10 +1,18 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5047/api/auth"; // Adjust based on your backend
+const API_URL = "http://localhost:5000/api/auth"; // Adjust based on your backend
 
 export const login = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/login`, userData);
+
+    if (response.data.token) {
+      localStorage.setItem("token", response.data.token); // Store JWT in localStorage
+      console.log("Token stored:", response.data.token);
+    } else {
+      console.error("Login failed:", response.data.message);
+    }
+
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Login failed";
