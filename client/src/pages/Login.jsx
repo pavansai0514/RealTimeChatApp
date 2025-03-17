@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login } from "../services/authService";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import NavbarComponent from '../components/NavbarComponent';
+import FooterComponent from '../components/FooterComponent';
 
 export default function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -59,6 +60,7 @@ export default function Login() {
           </Form>
         </Card.Body>
       </Card>
+      <FooterComponent/>
     </Container>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { register } from "../services/authService";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import NavbarComponent from '../components/NavbarComponent';
+import FooterComponent from '../components/FooterComponent';
 
 export default function Register() {
   const [formData, setFormData] = useState({ username: "", password: "", confirmPassword: "" });
@@ -74,6 +75,8 @@ export default function Register() {
           </Form>
         </Card.Body>
       </Card>
+      <FooterComponent/>
     </Container>
+   
   );
 }
