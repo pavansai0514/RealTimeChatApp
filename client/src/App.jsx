@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from './pages/Login';
 import Register from "./pages/Register";
 import Home from './pages/Home';
+import Chat from './pages/Chat'
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
          <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   )

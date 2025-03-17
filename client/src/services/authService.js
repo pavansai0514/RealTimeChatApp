@@ -1,5 +1,7 @@
 import axios from "axios";
 
+
+
 const API_URL = "http://localhost:5000/api/auth"; // Adjust based on your backend
 
 export const login = async (userData) => {
@@ -9,6 +11,7 @@ export const login = async (userData) => {
     if (response.data.token) {
       localStorage.setItem("token", response.data.token); // Store JWT in localStorage
       console.log("Token stored:", response.data.token);
+      
     } else {
       console.error("Login failed:", response.data.message);
     }
@@ -26,4 +29,10 @@ export const register = async (userData) => {
   } catch (error) {
     throw error.response?.data?.message || "Registration failed";
   }
+};
+
+// /src/services/authService.js
+export const logout = () => {
+  // Logic to log out and clear tokens from localStorage
+  localStorage.removeItem('token');
 };

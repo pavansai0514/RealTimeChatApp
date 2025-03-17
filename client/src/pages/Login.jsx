@@ -1,36 +1,55 @@
+// /src/pages/Login.js
 import { useState } from "react";
-import { login } from "../services/authService";
+import { login } from "../services/authService"; // Function to call API for login
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import NavbarComponent from '../components/NavbarComponent';
 import FooterComponent from '../components/FooterComponent';
+import { useNavigate } from "react-router-dom";
+
+// Import Redux hooks
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../store/authSlice';
 
 export default function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
+  const dispatch = useDispatch(); // Redux dispatch function
+  const navigate = useNavigate();
 
+  // Handle form input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(formData);
+      const data = await login(formData); // Call the login service
       setMessage({ text: "Login successful!", type: "success" });
-      console.log(data);
+
+      // Dispatch loginSuccess action to store user info in Redux
+      dispatch(loginSuccess(data.user)); // Assuming the response has a `user` object
+
+      // Optionally store the token or user info in localStorage for persistence
+      localStorage.setItem('token', data.token); // Store JWT Token
+
+      navigate("/chat"); // Redirect to chat page after login
     } catch (error) {
-      setMessage({ text: "Login failed. Please check your credentials.", type: "danger" });
+      setMessage({ text: "Login failed. Please check your credentials.", type: "danger" }); // Error handling
     }
   };
 
   return (
-
     <Container className="d-flex justify-content-center align-items-center vh-100">
-       <NavbarComponent/>
+      <NavbarComponent />
       <Card style={{ width: "25rem", padding: "20px" }}>
         <Card.Body>
           <h2 className="text-center mb-4">Login</h2>
+          {/* Display message after login attempt */}
           {message && <Alert variant={message.type}>{message.text}</Alert>}
+          
+          {/* Login Form */}
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Username</Form.Label>
@@ -43,6 +62,7 @@ export default function Login() {
                 required
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -54,13 +74,14 @@ export default function Login() {
                 required
               />
             </Form.Group>
+
             <Button variant="primary" type="submit" className="w-100">
               Login
             </Button>
           </Form>
         </Card.Body>
       </Card>
-      <FooterComponent/>
+      <FooterComponent />
     </Container>
   );
 }
