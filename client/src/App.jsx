@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Home from './pages/Home';
 import Chat from './pages/Chat'
 import Profile from './components/Profile';
+import Logout from './components/Logout';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </Router>
   )

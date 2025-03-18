@@ -29,8 +29,9 @@ export default function Login() {
       setMessage({ text: "Login successful!", type: "success" });
 
       // Dispatch loginSuccess action to store user info in Redux
-      dispatch(loginSuccess(data.user)); // Assuming the response has a `user` object
-
+      //dispatch(loginSuccess(data.username)); // Assuming the response has a `user` object
+      dispatch(loginSuccess({ user: { username: data.username }, token: data.token }));
+      
       // Optionally store the token or user info in localStorage for persistence
       localStorage.setItem('token', data.token); // Store JWT Token
 

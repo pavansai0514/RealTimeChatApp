@@ -22,7 +22,7 @@ export default function Register() {
     try {
       const data = await register(formData);
       setMessage({ text: "Registration successful!", type: "success" });
-      console.log(data);
+    
     } catch (error) {
       setMessage({ text: "Registration failed. Please try again.", type: "danger" });
     }

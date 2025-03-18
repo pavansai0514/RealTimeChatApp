@@ -58,11 +58,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
- 
-
 var app = builder.Build();
-
-
 
 var webSocketHandler = new WebSocketHandler();
 app.Map("/ws", async context =>
@@ -120,27 +116,30 @@ app.MapPost("/api/auth/login", async (AppDbContext db,HttpContext httpContext, [
     }
 
     // ✅ Create JWT Token
-    var tokenHandler = new JwtSecurityTokenHandler();
-    var tokenDescriptor = new SecurityTokenDescriptor
-    {
-        Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, credentials.Username) }),
-        Expires = DateTime.UtcNow.AddMinutes(60),
-        Issuer = jwtSettings["Issuer"],
-        Audience = jwtSettings["Audience"],
-        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-    };
+ var tokenHandler = new JwtSecurityTokenHandler();
+ var tokenDescriptor = new SecurityTokenDescriptor
+{
+    Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, credentials.Username) }),
+    Expires = DateTime.UtcNow.AddMinutes(60),
+    Issuer = jwtSettings["Issuer"],
+    Audience = jwtSettings["Audience"],
+    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+};
 
-    var token = tokenHandler.CreateToken(tokenDescriptor);
+var token = tokenHandler.CreateToken(tokenDescriptor);
 
-    var tokenString = tokenHandler.WriteToken(token);
-    httpContext.Response.Cookies.Append("AuthToken", tokenString, new CookieOptions
-    {
-        HttpOnly = true, // Prevent JavaScript access
-        Secure = true,   // Use HTTPS
-        SameSite = SameSiteMode.Strict,
-        Expires = DateTime.UtcNow.AddMinutes(60)
-    });
-    return Results.Ok(new { Token = tokenHandler.WriteToken(token) });
+var tokenString = tokenHandler.WriteToken(token);
+httpContext.Response.Cookies.Append("AuthToken", tokenString, new CookieOptions
+{
+    HttpOnly = true, // Prevent JavaScript access
+    Secure = true,   // Use HTTPS
+    SameSite = SameSiteMode.Strict,
+    Expires = DateTime.UtcNow.AddMinutes(60)
+});
+
+// Return both the token and the username
+return Results.Ok(new { Token = tokenString, Username = credentials.Username });
+
 });
 
 
@@ -157,8 +156,6 @@ app.MapGet("/", () =>
 });
 
 app.MapGet("/api/users", () => Results.Ok(users));
-
-
 
 app.Run();
 

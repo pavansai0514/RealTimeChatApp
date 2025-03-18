@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connectWebSocket, sendPrivateMessage } from '../services/webSocketService';
+import { useSelector } from 'react-redux';
 import { Container, Row, Col, InputGroup, FormControl, Button, Card, ListGroup } from 'react-bootstrap';
 import NavbarComponent from '../components/NavbarComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -8,8 +9,20 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [receiver, setReceiver] = useState("");
-  const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(false);
+  const [username, setUsername] = useState("");
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    console.log('Redux state after page reload:', user.username);
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username); // Automatically set username from Redux user
+      console.log(user.username);
+    }
+  }, [user]); // This runs whenever the `user` from Redux changes
 
   useEffect(() => {
     if (username && !connected) {
@@ -52,7 +65,7 @@ const Chat = () => {
               </div>
             ) : (
               <div>
-                <h3 className="text-center">Welcome, {username}!</h3>
+                {/* // <h3 className="text-center">Welcome, {user}!</h3> */}
 
                 {/* Receiver Input */}
                 <InputGroup className="mb-3">
