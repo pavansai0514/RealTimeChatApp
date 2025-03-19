@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
+
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using server.Data;
 using Microsoft.EntityFrameworkCore; 
-using BCrypt.Net;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +19,7 @@ var key = Encoding.UTF8.GetBytes(secretKey);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", // Define a CORS policy named "AllowFrontend"
+    options.AddPolicy("AllowAll", // Define a CORS policy named "AllowFrontend"
         policy =>
         {
             policy.WithOrigins("http://localhost:3000") // Allow requests from Vite's frontend
@@ -54,9 +54,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 //Database Connecton
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -80,14 +83,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowFrontend");
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseWebSockets();
+app.UseRouting();
 
-var users = new List<User>(); // ✅ In-memory user list
+
 
 
 // ✅ Register a new user
@@ -155,7 +159,16 @@ app.MapGet("/", () =>
     return Results.Ok("Hello, Client! This is a response from the server.");
 });
 
-app.MapGet("/api/users", () => Results.Ok(users));
+app.MapGet("/api/users", async (AppDbContext db) =>
+{
+    var users = await db.Users.Select(u => new { u.Username, u.IsOnline }).ToListAsync();
+    return Results.Ok(users);
+});
+
+
+
+app.MapHub<ChatHub>("/chatHub");
+
 
 app.Run();
 

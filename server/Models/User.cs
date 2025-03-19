@@ -10,4 +10,6 @@ public class User
     
     [Required]
     public string Password { get; set; } = string.Empty; // Store hashed password
+
+    public bool IsOnline { get; set; } = false; // ✅ Track online status
 }
