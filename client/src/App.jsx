@@ -12,6 +12,10 @@ import UserStatus from './components/UserStatus';
 
 function App() {
   return (
+  
+
+
+
     <Router>
       <Routes>
          <Route path="/" element={<Home />} />
@@ -21,9 +25,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/status" element={<UserStatus />} />
         <Route path="/logout" element={<Logout />} />
-        
       </Routes>
     </Router>
+  
   )
 }
 

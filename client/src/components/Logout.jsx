@@ -10,6 +10,7 @@ const Logout = () => {
   const handleLogout = () => {
     logout();  // Clear token from localStorage
     dispatch(logoutRedux());  // Clear user data in Redux
+    localStorage.removeItem("user");
   };
 
   return <button onClick={handleLogout}>Logout</button>;

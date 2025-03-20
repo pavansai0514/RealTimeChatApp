@@ -53,7 +53,7 @@ public class WebSocketHandler
     {
         if (Clients.TryGetValue(receiver, out WebSocket? receiverSocket))
         {
-            var formattedMessage = $"{sender} (private): {message}";
+            var formattedMessage = $"{sender}:{message}";
             var data = Encoding.UTF8.GetBytes(formattedMessage);
             await receiverSocket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true, CancellationToken.None);
         }

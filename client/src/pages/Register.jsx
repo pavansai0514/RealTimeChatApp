@@ -31,13 +31,12 @@ export default function Register() {
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
         <NavbarComponent/>
-      <Card style={{ width: "25rem", padding: "20px" }}>
+      <Card className="bg-info" style={{ width: "25rem", padding: "20px" }}>
         <Card.Body>
-          <h2 className="text-center mb-4">Sign Up</h2>
+          <h2 className="text-center mb-4 ">Sign Up</h2>
           {message && <Alert variant={message.type}>{message.text}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
                 name="username"
@@ -48,7 +47,6 @@ export default function Register() {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
                 name="password"
@@ -59,7 +57,6 @@ export default function Register() {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Confirm Password</Form.Label>
               <Form.Control
                 type="password"
                 name="confirmPassword"

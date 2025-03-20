@@ -1,19 +1,18 @@
-// /src/pages/Login.js
-import { useState } from "react";
-import { login } from "../services/authService"; // Function to call API for login
+import { useState, useEffect } from "react";
+import { login } from "../services/authService";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import NavbarComponent from '../components/NavbarComponent';
 import FooterComponent from '../components/FooterComponent';
 import { useNavigate } from "react-router-dom";
-
-// Import Redux hooks
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../store/authSlice';
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export default function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
-  const dispatch = useDispatch(); // Redux dispatch function
+  const [connection, setConnection] = useState(null);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Handle form input changes
@@ -25,35 +24,40 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(formData); // Call the login service
+      const data = await login(formData);
       setMessage({ text: "Login successful!", type: "success" });
 
-      // Dispatch loginSuccess action to store user info in Redux
-      //dispatch(loginSuccess(data.username)); // Assuming the response has a `user` object
       dispatch(loginSuccess({ user: { username: data.username }, token: data.token }));
-      
-      // Optionally store the token or user info in localStorage for persistence
-      localStorage.setItem('token', data.token); // Store JWT Token
+      localStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(data.username));
 
-      navigate("/chat"); // Redirect to chat page after login
+      // Establish SignalR connection
+      const newConnection = new HubConnectionBuilder()
+        .withUrl("http://localhost:5000/chatHub")
+        .withAutomaticReconnect()
+        .build();
+
+      await newConnection.start();
+      console.log("Connected to SignalR");
+      await newConnection.invoke("UserConnected", data.username);
+      setConnection(newConnection);
+     console.log("database status changed");
+      navigate("/chat");
     } catch (error) {
-      setMessage({ text: "Login failed. Please check your credentials.", type: "danger" }); // Error handling
+      setMessage({ text: "Login failed. Please check your credentials.", type: "danger" });
     }
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
+    <Container className="  d-flex justify-content-center align-items-center vh-100">
       <NavbarComponent />
-      <Card style={{ width: "25rem", padding: "20px" }}>
+      <Card className=" bg-info"style={{ width: "25rem", padding: "20px" }}>
         <Card.Body>
           <h2 className="text-center mb-4">Login</h2>
-          {/* Display message after login attempt */}
           {message && <Alert variant={message.type}>{message.text}</Alert>}
-          
-          {/* Login Form */}
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
+           
               <Form.Control
                 type="text"
                 name="username"
@@ -63,9 +67,8 @@ export default function Login() {
                 required
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
+              
               <Form.Control
                 type="password"
                 name="password"
@@ -75,10 +78,7 @@ export default function Login() {
                 required
               />
             </Form.Group>
-
-            <Button variant="primary" type="submit" className="w-100">
-              Login
-            </Button>
+            <Button variant="primary" type="submit" className="w-100">Login</Button>
           </Form>
         </Card.Body>
       </Card>

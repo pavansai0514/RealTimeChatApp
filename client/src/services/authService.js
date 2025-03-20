@@ -1,9 +1,7 @@
 import axios from "axios";
 
-
-
 const API_URL = "http://localhost:5000/api/auth"; // Adjust based on your backend
-export const saveUserToSessionStorage = (user) => {
+  export const saveUserToSessionStorage = (user) => {
   sessionStorage.setItem("user", JSON.stringify(user)); // Serialize user data before storing
   console.log("User saved to sessionStorage:", user);
 };

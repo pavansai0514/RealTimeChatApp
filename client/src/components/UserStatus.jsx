@@ -1,10 +1,11 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const UserStatus = () => {
     const [users, setUsers] = useState([]);
     const [connection, setConnection] = useState(null);
-    const username = sessionStorage.getItem("user")?.replace(/"/g, "").trim(); // Fetch user from sessionStorage
+    const username = sessionStorage.getItem("user")?.replace(/"/g, "").trim();
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -20,7 +21,7 @@ const UserStatus = () => {
         fetchUsers();
 
         if (username) {
-            console.log(`User  in session is ${username}`);
+            console.log(`User in session is ${username}`);
             const newConnection = new HubConnectionBuilder()
                 .withUrl("http://localhost:5000/chatHub")
                 .withAutomaticReconnect()
@@ -29,7 +30,7 @@ const UserStatus = () => {
             newConnection.start()
                 .then(async () => {
                     console.log("Connected to SignalR");
-                    await newConnection.invoke("UserConnected", username); // Ensure method name is correct
+                    await newConnection.invoke("UserConnected", username);
                 })
                 .catch(err => console.error("Connection Error:", err));
 
@@ -57,7 +58,7 @@ const UserStatus = () => {
             try {
                 if (connection.state === "Connected") {
                     if (username) {
-                        await connection.invoke("UserDisconnected", username); // Ensure method name is correct
+                        await connection.invoke("UserDisconnected", username);
                     } else {
                         console.error("Username is not defined.");
                     }
@@ -71,28 +72,35 @@ const UserStatus = () => {
             console.error("No active connection to SignalR.");
         }
 
-        await connection.stop();  // Stop the connection AFTER invoking UserDisconnected
+        await connection.stop();
         sessionStorage.removeItem("user");
-      window.location.reload();
+        window.location.reload();
     };
 
     return (
-        <div>
-            <h2>User Status</h2>
-            {username && (
-                <>
-                    <p>Logged in as: <strong>{username}</strong></p>
-                    <button onClick={handleLogout}>Logout</button>
-                </>
-            )}
-            <h3>All Users</h3>
-            <ul>
-                {users.map(user => (
-                    <li key={user.username}>
-                        {user.username} - {user.isOnline ? "🟢 Online" : "⚪ Offline"}
-                    </li>
-                ))}
-            </ul>
+        <div className="container mt-4">
+            <div className="card shadow-lg p-3 mb-5 bg-white rounded">
+                <div className="card-body">
+                    <h4 className="card-title text-center text-primary">User Status</h4>
+                    {username && (
+                        <div className="text-center mb-3">
+                            {/* <p className="fw-bold">Logged in as: <span className="text-success">{username}</span></p>
+                            <button className="btn btn-danger" onClick={handleLogout}>Logout</button> */}
+                        </div>
+                    )}
+                    <h5 className="text-success">Status of All Users</h5>
+                    <ul className="list-group mt-3">
+                        {users.map(user => (
+                            <li key={user.username} className="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{user.username}</span>
+                                <span className={user.isOnline ? "badge bg-success" : "badge bg-secondary"}>
+                                    {user.isOnline ? "Online 🟢" : "Offline ⚪"}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
         </div>
     );
 };
