@@ -18,6 +18,32 @@ const Chat = () => {
   //   console.log('Redux state after page reload:', user.username);
   // }, [user]);
 
+
+  const handleLogout = async () => {
+    if (messages.length > 0) {
+      const formattedMessages = messages.map((msg) => ({
+        sender: username,
+        receiver: msg.receiver, // Ensure receiver is included
+        content: msg.content,
+        timestamp: new Date().toISOString(),
+      }));
+  
+      try {
+        await fetch("http://localhost:5000/api/messages/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: formattedMessages }),
+        });
+      } catch (error) {
+        console.error("Error saving messages:", error);
+      }
+    }
+  
+    setMessages([]); // Clear local messages
+   // dispatch(logoutUser()); // Logout action
+  };
+
+  
   useEffect(() => {
     if (user) {
       setUsername(user.username); // Automatically set username from Redux user
@@ -117,8 +143,13 @@ const Chat = () => {
       <div className="">
 <UserStatus/>
 </div>
-</div>   {/*mainclose*/}
+</div> 
+<button onClick={handleLogout} className="">
+          Update
+        </button>
+
       {/* Footer Component */}
+
       <FooterComponent />
     </div>
   );

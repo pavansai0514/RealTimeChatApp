@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using server.Data;
 using Microsoft.EntityFrameworkCore; 
+using server.Services;
 
 
 
@@ -54,6 +55,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddScoped<MessageService>();
 
 //Database Connecton
 builder.Services.AddDbContext<AppDbContext>(options =>

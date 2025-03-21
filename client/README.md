@@ -1,12 +1,29 @@
-# React + Vite
+# ChatApp 
+This project is about chatting application where users can communicate each other over web application 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## steps to run the application 
+git clone https://github.com/pavansai0514/RealTimeChatApp.git
 
-Currently, two official plugins are available:
+### To execute the server
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+cd RealTimeChatApp/server
 
-## Expanding the ESLint configuration
+### To create table in database and update run commands:
+1. dotnet ef migrations add InitialCreate 
+2. dotnet ef database update
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### To run type this command:
+dotnet run
+
+### To execute the client
+now goto RealTimeChatApp/client 
+Type this command to execute 
+1. npm run dev
+
+check where the client port where application is running
+1. open browser and type http://localhost:3000/ 
+2. you can goto home page and then register and signup 
+3. open the same link in another tab and register with another user and login 
+4. type receiver name to chat on both ends 
+
+

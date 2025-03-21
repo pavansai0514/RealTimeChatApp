@@ -52,4 +52,17 @@ public class ChatHub : Hub
 
         await base.OnDisconnectedAsync(exception);
     }
+      public async Task HandleMessageAsync(string sender, string receiver, string content)
+{
+    var message = new Message
+    {
+        Sender = sender,
+        Receiver = receiver,
+        Content = content,
+        Timestamp = DateTime.UtcNow
+    };
+
+    _db.Messages.Add(message);
+    await _db.SaveChangesAsync();
+}
 }

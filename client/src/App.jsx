@@ -12,10 +12,6 @@ import UserStatus from './components/UserStatus';
 
 function App() {
   return (
-  
-
-
-
     <Router>
       <Routes>
          <Route path="/" element={<Home />} />
@@ -27,7 +23,6 @@ function App() {
         <Route path="/logout" element={<Logout />} />
       </Routes>
     </Router>
-  
   )
 }
 
