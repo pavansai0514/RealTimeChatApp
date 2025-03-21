@@ -20,8 +20,8 @@ const UserStatus = () => {
 
         fetchUsers();
 
-        if (username) {
-            console.log(`User in session is ${username}`);
+        if (username) {//username from session
+           
             const newConnection = new HubConnectionBuilder()
                 .withUrl("http://localhost:5000/chatHub")
                 .withAutomaticReconnect()

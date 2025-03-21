@@ -47,7 +47,7 @@ const Chat = () => {
   useEffect(() => {
     if (user) {
       setUsername(user.username); // Automatically set username from Redux user
-      console.log(user.username);
+      
     }else{
       const sessionUser = sessionStorage.getItem("user")?.replace(/"/g, "").trim();
       setUsername(sessionUser);

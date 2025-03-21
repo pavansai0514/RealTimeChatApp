@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "http://localhost:5000/api/auth"; // Adjust based on your backend
   export const saveUserToSessionStorage = (user) => {
   sessionStorage.setItem("user", JSON.stringify(user)); // Serialize user data before storing
-  console.log("User saved to sessionStorage:", user);
+ 
 };
 
 export const login = async (userData) => {
@@ -12,8 +12,7 @@ export const login = async (userData) => {
 
     if (response.data.token) {
       localStorage.setItem("token", response.data.token); // Store JWT in localStorage
-      console.log("Token stored:", response.data.token);
-      console.log("user:",response.data.username);
+      
       saveUserToSessionStorage(response.data.username);
       
     } else {
